@@ -36,5 +36,13 @@ class MainActivity : AppCompatActivity() {
             val intent = Intent(this, ListActivity::class.java)
             startActivity(intent)
         }
+        binding.btnDiaryInsert.setOnClickListener{
+            val intent = Intent(this, AddActivity::class.java)
+            startActivity(intent)
+        }
+        binding.btnDiaryList.setOnClickListener{
+            val intent = Intent(this, TravelListActivity::class.java)
+            startActivity(intent)
+        }
     }
 }
