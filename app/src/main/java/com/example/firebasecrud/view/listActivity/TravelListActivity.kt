@@ -1,4 +1,4 @@
-package com.example.firebasecrud
+package com.example.firebasecrud.view.listActivity
 
 import android.graphics.Canvas
 import android.graphics.Color
@@ -9,27 +9,32 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import com.example.firebasecrud.databinding.ActivityListBinding
+import com.example.firebasecrud.DAO.UserDAO
+import com.example.firebasecrud.R
+import com.example.firebasecrud.adapter.TravelAdapter
+import com.example.firebasecrud.data.ItemData
+import com.example.firebasecrud.databinding.ActivityTravelListBinding
 import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.ValueEventListener
 import it.xabaras.android.recyclerview.swipedecorator.RecyclerViewSwipeDecorator
 
-class ListActivity : AppCompatActivity() {
-    lateinit var binding: ActivityListBinding
-    lateinit var userList: MutableList<User>
-    lateinit var adapter: UserAdapter
+class TravelListActivity : AppCompatActivity() {
+    lateinit var binding: ActivityTravelListBinding
+    lateinit var itemDatalist: MutableList<ItemData>
+    lateinit var adapter: TravelAdapter
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        binding = ActivityListBinding.inflate(layoutInflater)
+        binding = ActivityTravelListBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-        userList = mutableListOf()
-        adapter = UserAdapter(userList)
+        itemDatalist = mutableListOf()
+        adapter = TravelAdapter(this, itemDatalist)
         binding.recyclerView.layoutManager = LinearLayoutManager(this)
         binding.recyclerView.adapter = adapter
-
-        selectUser()
+        Log.d("firebasecrud", "Success oncreate @TravelListActivity")
+        selectItemData()
 
         /*add recyvlerView swipe function*/
         ItemTouchHelper(object : ItemTouchHelper.SimpleCallback(0, ItemTouchHelper.LEFT) {
@@ -46,17 +51,17 @@ class ListActivity : AppCompatActivity() {
                 val userDAO = UserDAO()
                 when (direction) {
                     ItemTouchHelper.LEFT -> {
-                        val key = userList.get(position).userKey
-                        userDAO.deleteUser(key).addOnSuccessListener {
+                        val key = itemDatalist.get(position).docID
+                        userDAO.deleteTravelDiary(key!!).addOnSuccessListener {
                             Toast.makeText(applicationContext,
                                 "delete user success",
                                 Toast.LENGTH_SHORT).show()
-                            Log.d("firebasecrud", "success deleteUser() @UpdateActivity")
+                            Log.d("firebasecrud", "success deleteTravel() @TravelListActivity")
                         }.addOnFailureListener {
                             Toast.makeText(applicationContext,
                                 "delete user fail",
                                 Toast.LENGTH_SHORT).show()
-                            Log.d("firebasecrud", "fail deleteUser() @UpdateActivity")
+                            Log.d("firebasecrud", "fail deleteTravel() @TravelListActivity")
                         }
                     }
                 }
@@ -89,26 +94,26 @@ class ListActivity : AppCompatActivity() {
         }).attachToRecyclerView(binding.recyclerView)
     }
 
-    private fun selectUser() {
+    private fun selectItemData() {
         val userDAO = UserDAO()
-        userDAO.selectUser()?.addValueEventListener(object : ValueEventListener {
+        userDAO.selectItemData()?.addValueEventListener(object : ValueEventListener {
             /*run on success - Receive data one by one in json format and set class type*/
             override fun onDataChange(snapshot: DataSnapshot) {
-                userList.clear()
+                itemDatalist.clear()
                 for (userData in snapshot.children) {
-                    val user = userData.getValue(User::class.java)
-                    user?.userKey = userData.key.toString()
-                    if (user != null) {
-                        userList.add(user)
+                    val itemData = userData.getValue(ItemData::class.java)
+                    if (itemData != null) {
+                        itemDatalist.add(itemData)
                     }
                 }//for
                 adapter.notifyDataSetChanged()
             }//onDataChange
-
             /*run on failure*/
             override fun onCancelled(error: DatabaseError) {
-                Toast.makeText(applicationContext, "failed loading data", Toast.LENGTH_SHORT).show()
-                Log.d("firebasecrud", "failed selectUser() @ListActivity")
+                Toast.makeText(applicationContext,
+                    "failed loading storage data",
+                    Toast.LENGTH_SHORT).show()
+                Log.d("firebasecrud", "failed selectItemData() @TravelListActivity")
             }
         })
     }

@@ -1,32 +1,41 @@
-package com.example.firebasecrud
+package com.example.firebasecrud.view.listActivity
 
+import android.graphics.Canvas
+import android.graphics.Color
 import android.os.Bundle
 import android.util.Log
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
+import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.LinearLayoutManager
-import com.example.firebasecrud.databinding.ActivityTravelListBinding
+import androidx.recyclerview.widget.RecyclerView
+import com.example.firebasecrud.R
+import com.example.firebasecrud.data.User
+import com.example.firebasecrud.adapter.UserAdapter
+import com.example.firebasecrud.DAO.UserDAO
+import com.example.firebasecrud.databinding.ActivityListBinding
 import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.ValueEventListener
+import it.xabaras.android.recyclerview.swipedecorator.RecyclerViewSwipeDecorator
 
-class TravelListActivity : AppCompatActivity() {
-    lateinit var binding: ActivityTravelListBinding
-    lateinit var itemDatalist: MutableList<ItemData>
-    lateinit var adapter: TravelAdapter
-
+class ListActivity : AppCompatActivity() {
+    lateinit var binding: ActivityListBinding
+    lateinit var userList: MutableList<User>
+    lateinit var adapter: UserAdapter
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        binding = ActivityTravelListBinding.inflate(layoutInflater)
+        binding = ActivityListBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-        itemDatalist = mutableListOf()
-        adapter = TravelAdapter(this, itemDatalist)
+        userList = mutableListOf()
+        adapter = UserAdapter(userList)
         binding.recyclerView.layoutManager = LinearLayoutManager(this)
         binding.recyclerView.adapter = adapter
-        Log.d("firebasecrud", "Success oncreate @TravelListActivity")
-        selectItemData()
-        /*add recyvlerView swipe function*//*
+
+        selectUser()
+
+        /*add recyvlerView swipe function*/
         ItemTouchHelper(object : ItemTouchHelper.SimpleCallback(0, ItemTouchHelper.LEFT) {
             override fun onMove(
                 recyclerView: RecyclerView,
@@ -81,29 +90,29 @@ class TravelListActivity : AppCompatActivity() {
                     actionState,
                     isCurrentlyActive)
             }
-        }).attachToRecyclerView(binding.recyclerView)*/
+        }).attachToRecyclerView(binding.recyclerView)
     }
 
-    private fun selectItemData() {
+    private fun selectUser() {
         val userDAO = UserDAO()
-        userDAO.selectItemData()?.addValueEventListener(object : ValueEventListener {
+        userDAO.selectUser()?.addValueEventListener(object : ValueEventListener {
             /*run on success - Receive data one by one in json format and set class type*/
             override fun onDataChange(snapshot: DataSnapshot) {
-                itemDatalist.clear()
+                userList.clear()
                 for (userData in snapshot.children) {
-                    val itemData = userData.getValue(ItemData::class.java)
-                    if (itemData != null) {
-                        itemDatalist.add(itemData)
+                    val user = userData.getValue(User::class.java)
+                    user?.userKey = userData.key.toString()
+                    if (user != null) {
+                        userList.add(user)
                     }
                 }//for
                 adapter.notifyDataSetChanged()
             }//onDataChange
+
             /*run on failure*/
             override fun onCancelled(error: DatabaseError) {
-                Toast.makeText(applicationContext,
-                    "failed loading storage data",
-                    Toast.LENGTH_SHORT).show()
-                Log.d("firebasecrud", "failed selectItemData() @TravelListActivity")
+                Toast.makeText(applicationContext, "failed loading data", Toast.LENGTH_SHORT).show()
+                Log.d("firebasecrud", "failed selectUser() @ListActivity")
             }
         })
     }

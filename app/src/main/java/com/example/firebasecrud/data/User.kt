@@ -1,4 +1,4 @@
-package com.example.firebasecrud
+package com.example.firebasecrud.data
 
 data class User(
     var userKey: String = "",

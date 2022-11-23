@@ -1,4 +1,4 @@
-package com.example.firebasecrud
+package com.example.firebasecrud.adapter
 
 import android.app.Activity
 import android.content.Context
@@ -8,6 +8,9 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
+import com.example.firebasecrud.R
+import com.example.firebasecrud.view.activities.UpdateActivity
+import com.example.firebasecrud.data.User
 
 class UserAdapter(val userList: MutableList<User>) :
     RecyclerView.Adapter<UserAdapter.UserViewHolder>() {

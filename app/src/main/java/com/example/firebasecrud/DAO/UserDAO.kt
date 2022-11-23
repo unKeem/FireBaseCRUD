@@ -1,5 +1,7 @@
-package com.example.firebasecrud
+package com.example.firebasecrud.DAO
 
+import com.example.firebasecrud.data.ItemData
+import com.example.firebasecrud.data.User
 import com.google.android.gms.tasks.Task
 import com.google.firebase.database.DatabaseReference
 import com.google.firebase.database.FirebaseDatabase
@@ -37,10 +39,16 @@ class UserDAO {
         //insert into user(userKey, userName, userAge, userPhone) values('keyValue', 'nameValue'......)
         return travelDiaryDatabaseReference!!.push().setValue(itemData)
     }
-
+    /*select diaryTBL @realtime database*/
     fun selectItemData(): Query? {
         return travelDiaryDatabaseReference
     }
+
+    /*realtime database diaryTBL table delete*/
+    fun deleteTravelDiary(key: String): Task<Void> {
+        return travelDiaryDatabaseReference!!.child(key).removeValue()
+    }
+
     /*realtime database user table select*/
     fun selectUser(): Query? {
         return databaseReference

@@ -1,11 +1,13 @@
-package com.example.firebasecrud
+package com.example.firebasecrud.view.activities
 
 import android.content.Intent
 import android.os.Bundle
 import android.util.Log
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
+import com.example.firebasecrud.DAO.UserDAO
 import com.example.firebasecrud.databinding.ActivityUpdateBinding
+import com.example.firebasecrud.view.listActivity.ListActivity
 
 class UpdateActivity : AppCompatActivity() {
     lateinit var binding: ActivityUpdateBinding

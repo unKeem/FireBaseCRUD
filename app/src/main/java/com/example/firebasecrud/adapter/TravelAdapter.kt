@@ -1,10 +1,12 @@
-package com.example.firebasecrud
+package com.example.firebasecrud.adapter
 
 import android.content.Context
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
+import com.example.firebasecrud.data.ItemData
+import com.example.firebasecrud.DAO.UserDAO
 import com.example.firebasecrud.databinding.TravelLayoutBinding
 
 class TravelAdapter(val context: Context, val itemList: MutableList<ItemData>):
